@@ -15,7 +15,7 @@ var Navigation = StackNavigator({
 	initialRouteName: 'Login',
 	navigationOptions: {
 		gestureResponseDistance: {
-			horizontal: 125
+			horizontal: 65
 		}
 	}
 });

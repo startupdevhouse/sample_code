@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import AnimalsPicker from './AnimalsPicker';
 
 import User from 'app/redux/modules/User';
 import Input from 'components/form/Input';
@@ -12,14 +13,19 @@ export default class Login extends Component {
 		super(props);
 
 		this.state = {
-			email: '',
-			password: ''
+			soulmate: null
 		}
 	}
 
 	logOut = () => {
-		User.logOut(this.state.email, this.state.password).then(() => {
+		User.logOut().then(() => {
 			this.props.navigation.navigate('LogOut');
+		});
+	}
+
+	soulmateSelected = (animal) => {
+		this.setState({
+			soulmate: animal
 		});
 	}
 
@@ -34,6 +40,16 @@ export default class Login extends Component {
 					</Text>
 					<Text style={styles.title}>
 						Find your own soulmate
+					</Text>
+				</View>
+				<View style={{ width: '75%' }}>
+					<AnimalsPicker onChange={this.soulmateSelected}/>
+					<Text style={styles.soulmateText}>
+						{this.state.soulmate ? (
+							'Your soulmate is a ' + this.state.soulmate.name + '...'
+						) : (
+							'You should choose a soulmate...'
+						)}
 					</Text>
 				</View>
 				<ConfirmButton
@@ -66,9 +82,14 @@ var styles = StyleSheet.create({
 		marginBottom: 2,
 		textAlign: 'center'
 	},
+	soulmateText: {
+		alignSelf: 'center',
+		fontSize: 24,
+		marginTop: 20,
+		color: '#FFF'
+	},
 	button: {
 		alignSelf: 'flex-end',
-		marginTop: 30,
 		width: '50%'
 	}
 });
