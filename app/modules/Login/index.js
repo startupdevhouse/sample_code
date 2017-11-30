@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import User from 'app/redux/modules/User';
@@ -12,8 +12,9 @@ export default class Login extends Component {
 		super(props);
 
 		this.state = {
-			email: '',
-			password: ''
+			error: null,
+			email: 'test@test.pl',
+			password: 'test'
 		}
 	}
 
@@ -29,24 +30,48 @@ export default class Login extends Component {
 		});
 	}
 
+	logIn = () => {
+		User.logIn(this.state.email, this.state.password).then(() => {
+			this.setState({
+				error: null
+			});
+			this.props.navigation.navigate('AnimalsColors');
+		}).catch(() => {
+			this.setState({
+				error: 'Invalid credentials'
+			});
+		});
+	}
+
 	render () {
 		return (
-			<KeyboardAwareScrollView
-				keyboardDismissMode="interactive"
+			<ScrollView
 				contentContainerStyle={styles.container}>
-				<Text style={styles.login}>
-					Welcome,
-					please log in
-				</Text>
-				<Input placeholder="e-mail"
-					onChange={this.emailChanged}/>
-				<Input placeholder="password"
-					password
-					onChange={this.passwordChanged}/>
-				<ConfirmButton
-					onPress={User.logIn}
-					text="Log in"/>
-			</KeyboardAwareScrollView>
+				<KeyboardAvoidingView
+					keyboardDismissMode="on-drag"
+					behavior="padding">
+					<Text style={styles.login}>
+						Welcome,
+						please log in
+					</Text>
+					<Input placeholder="e-mail"
+						value={this.state.email}
+						onChange={this.emailChanged}/>
+					<Input placeholder="password"
+						value={this.state.password}
+						password
+						onChange={this.passwordChanged}/>
+					{this.state.error ? (
+						<Text style={styles.error}>
+							{this.state.error}
+						</Text>
+					) : null}
+					<ConfirmButton
+						style={styles.button}
+						onPress={this.logIn}
+						text="Log in"/>
+				</KeyboardAvoidingView>
+			</ScrollView>
 		)
 	}
 
@@ -55,14 +80,26 @@ export default class Login extends Component {
 var styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		alignItems: 'center',
+		alignItems: 'stretch',
 		justifyContent: 'center',
 		backgroundColor: '#39F',
-		paddingHorizontal: 30
+		paddingHorizontal: 15
 	},
 	login: {
+		alignSelf: 'center',
 		fontSize: 24,
 		color: '#FFF',
 		marginBottom: 30
+	},
+	button: {
+		alignSelf: 'center',
+		marginTop: 15
+	},
+	error: {
+		color: 'red',
+		fontSize: 18,
+		marginTop: 15,
+		marginBottom: -5,
+		alignSelf: 'center'
 	}
 });
